@@ -13,6 +13,26 @@ var mesh;
 init();
 animate();
 
+var params = {
+  faceColor: "#ffffcc",
+  brushColor: "#1861b3",
+  brushSize: 10,
+  opacity: 1,
+};
+
+var gui = new dat.GUI();
+
+var update = function () {
+    var facecolorObj = new THREE.Color( params.faceColor );
+    var hex = facecolorObj.getHexString();
+    //var css = facecolorObj.getStyle();
+    mesh.material.color.setHex("0x" + hex);
+};
+
+gui.addColor(params, 'faceColor').onChange(update);
+gui.addColor(params, 'brushColor').onChange(update);
+gui.add(params, 'brushSize', 0, 20).onChange(update);
+gui.add(params, 'opacity', 0, 1).onChange(update);
 
 function init() {
   container = document.createElement( 'div' );
@@ -56,7 +76,7 @@ function init() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.appendChild( renderer.domElement );
-  container.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  //container.addEventListener( 'mousemove', onDocumentMouseMove, false );
   //
   window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -77,8 +97,6 @@ function loadLeePerrySmith( callback ) {
     scene.add( mesh );
     mesh.scale.set( 10, 10, 10 );
 
-    var gui = new DAT.GUI();
-    gui.addColor(mesh, 'color');
     // gui.add(mesh.rotation.x, 'x').min(0.0).max(0.1).step(0.01);
     // gui.add(mesh.rotation.y, 'y', 0.1, 10, 0.1);
     // gui.add(mesh.scale, 'z', 0.1, 10, 0.1);
