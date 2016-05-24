@@ -9,6 +9,7 @@ var helper;
 var obj;
 var textureLoader = new THREE.TextureLoader();
 var mesh;
+var helper;
 
 init();
 animate();
@@ -65,18 +66,14 @@ function init() {
 
   loadLeePerrySmith();
 
-  var geometry = new THREE.CylinderGeometry( 0, 20, 100, 3 );
-  geometry.translate( 0, 50, 0 );
-  geometry.rotateX( Math.PI / 2 );
-  helper = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
-  scene.add( helper );
+  helper();
 
   // END Clara.io JSON loader code
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.appendChild( renderer.domElement );
-  //container.addEventListener( 'mousemove', onDocumentMouseMove, false );
+  container.addEventListener( 'mousemove', onDocumentMouseMove, false );
   //
   window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -105,6 +102,13 @@ function loadLeePerrySmith( callback ) {
   } );
 }
 
+function helper() {
+  var geometry = new THREE.CylinderGeometry( 0, 1, 8, 5 ); // Right now hardcoded measurments.
+  geometry.translate( 0, 4, 0 ); //needs to be changed based on cylinder measurments!
+  geometry.rotateX( Math.PI / 2 );
+  helper = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+  scene.add( helper );
+}
 
 function onWindowResize() {
   windowHalfX = window.innerWidth / 2;
@@ -115,12 +119,12 @@ function onWindowResize() {
 }
 
 function onDocumentMouseMove( event ) {
-  console.log("lel");
+
   mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
   raycaster.setFromCamera( mouse, camera );
-  // See if the ray from the camera into the world hits one of our meshes
-  var intersects = raycaster.intersectObject( obj );
+  // See if the ray from the camera into the world hits mesh
+  var intersects = raycaster.intersectObject( mesh );
   // Toggle rotation bool for meshes that we clicked
   if ( intersects.length > 0 ) {
     helper.position.set( 0, 0, 0 );
