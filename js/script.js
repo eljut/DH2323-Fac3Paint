@@ -12,6 +12,7 @@ var mesh;
 var helper;
 var colorsNeedUpdate;
 var chosenBrushColor = "dc47b8";
+var mouseDown;
 
 init();
 animate();
@@ -75,6 +76,8 @@ function init() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.appendChild( renderer.domElement );
+  container.addEventListener( 'mousedown', onDocumentMouseDown, false );
+  container.addEventListener( 'mouseup', onDocumentMouseUp, false );
   container.addEventListener( 'mousemove', onDocumentMouseMove, false );
   //
   window.addEventListener( 'resize', onWindowResize, false );
@@ -118,6 +121,14 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
+function onDocumentMouseDown( event ) {
+  mouseDown = true;
+}
+
+function onDocumentMouseUp( event ) {
+  mouseDown = false;
+}
+
 function onDocumentMouseMove( event ) {
 
   mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
@@ -131,21 +142,23 @@ function onDocumentMouseMove( event ) {
     helper.lookAt( intersects[ 0 ].face.normal );
     helper.position.copy( intersects[ 0 ].point );
 
-    intersectedFaceId = intersects[0].face.id;
+    //intersectedFaceId = intersects[0].face.id;
+    if ( mouseDown == true ) {
+      for (i = 0; i < mesh.geometry.faces.length; i++) {
 
-    for (i = 0; i < mesh.geometry.faces.length; i++) {
-
-      if (mesh.geometry.faces[i].normal == intersects[0].face.normal) {
-        //console.log("INTERSECT: ", intersects[0].face.normal);
-        //console.log("MESH: ", mesh.geometry.faces[i].normal);
-        mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);//(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
-        //console.log("RESULT: ", mesh.geometry.faces[i]);
+        if (mesh.geometry.faces[i].normal == intersects[0].face.normal) {
+          //console.log("INTERSECT: ", intersects[0].face.normal);
+          //console.log("MESH: ", mesh.geometry.faces[i].normal);
+          mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);//(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
+          //console.log("RESULT: ", mesh.geometry.faces[i]);
+        }
       }
+      mesh.geometry.colorsNeedUpdate = true;
     }
-    mesh.geometry.colorsNeedUpdate = true;
 
   }
 }
+
 
 //
 function animate() {
