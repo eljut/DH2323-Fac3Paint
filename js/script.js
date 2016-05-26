@@ -11,28 +11,40 @@ var textureLoader = new THREE.TextureLoader();
 var mesh;
 var helper;
 var colorsNeedUpdate;
+var chosenBrushColor = "dc47b8";
 
 init();
 animate();
 
 var params = {
   faceColor: "#ffffcc",
-  brushColor: "#1861b3",
+  brushColor: "#dc47b8",
   brushSize: 10,
   opacity: 1,
 };
 
 var gui = new dat.GUI();
 
-var update = function () {
+var updateSkinColor = function () {
     var facecolorObj = new THREE.Color( params.faceColor );
     var hex = facecolorObj.getHexString();
     //var css = facecolorObj.getStyle();
     mesh.material.color.setHex("0x" + hex);
 };
 
-gui.addColor(params, 'faceColor').onChange(update);
-gui.addColor(params, 'brushColor').onChange(update);
+var updateBrushColor = function() {
+  var facecolorObj = new THREE.Color( params.brushColor );
+  var hex = facecolorObj.getHexString();
+  //var str = "0x";
+  chosenBrushColor = hex;
+}
+
+var update = function() {
+
+}
+
+gui.addColor(params, 'faceColor').onChange(updateSkinColor);
+gui.addColor(params, 'brushColor').onChange(updateBrushColor);
 gui.add(params, 'brushSize', 0, 20).onChange(update);
 gui.add(params, 'opacity', 0, 1).onChange(update);
 
@@ -55,21 +67,10 @@ function init() {
   directionalLight.position.set( 0, 0, 1 ).normalize();
   scene.add( directionalLight );
 
-  // BEGIN Clara.io JSON loader code
-  // var objectLoader = new THREE.ObjectLoader();
-  // objectLoader.load("lee-perry-smith-head-scan-threejs/lee-perry-smith-head-scan.json", function ( obj ) {
-  //   var mesh = new THREE.Mesh(obj);
-  //   scene.add( mesh );
-  //   // obj.rotation.y = Math.PI; // Rotate to face camera
-  //   // obj.position.y = -2; // Move down
-  //   mesh.scale.set( 10, 10, 10 );
-  // } );
-
   loadLeePerrySmith();
 
   helper();
 
-  // END Clara.io JSON loader code
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -92,20 +93,12 @@ function loadLeePerrySmith( callback ) {
       normalScale: new THREE.Vector2( 0.75, 0.75 ),
       shininess: 25
     } );
-    //geometry.faces[ faceIndex ].vertexColors[ vertexIndex ] = new THREE.Color( 0xff0000 );
-    mesh = new THREE.Mesh( geometry, material );
-    // for (i = 0; i < mesh.geometry.faces.length; i++) {
-    //   mesh.geometry.faces[i].color = new THREE.Color("rgb(255, 0, 0)");
-    // }
-    scene.add( mesh );
-    console.dir(mesh);
-    mesh.scale.set( 10, 10, 10 );
 
-    // gui.add(mesh.rotation.x, 'x').min(0.0).max(0.1).step(0.01);
-    // gui.add(mesh.rotation.y, 'y', 0.1, 10, 0.1);
-    // gui.add(mesh.scale, 'z', 0.1, 10, 0.1);
-    //scene.add( new THREE.FaceNormalsHelper( mesh, 1 ) );
-    //scene.add( new THREE.VertexNormalsHelper( mesh, 1 ) );
+    mesh = new THREE.Mesh( geometry, material );
+
+    scene.add( mesh );
+    //console.dir(mesh);
+    mesh.scale.set( 10, 10, 10 );
   } );
 }
 
@@ -139,25 +132,19 @@ function onDocumentMouseMove( event ) {
     helper.position.copy( intersects[ 0 ].point );
 
     intersectedFaceId = intersects[0].face.id;
-    //intersects[0].face.vertexColors = new THREE.Color("rgb(255, 0, 0)");
-    //mesh.geometry.faces[i].color = new THREE.Color("rgb(255, 0, 0)");
 
     for (i = 0; i < mesh.geometry.faces.length; i++) {
-      //mesh.geometry.faces[i].vertexColors = new THREE.Color("rgb(255, 0, 0)");
-      //console.log(mesh.geometry.faces[i].normal);
+
       if (mesh.geometry.faces[i].normal == intersects[0].face.normal) {
         //console.log("INTERSECT: ", intersects[0].face.normal);
         //console.log("MESH: ", mesh.geometry.faces[i].normal);
-        mesh.geometry.faces[i].color.setHex(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
+        mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);//(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
         //console.log("RESULT: ", mesh.geometry.faces[i]);
       }
     }
     mesh.geometry.colorsNeedUpdate = true;
-    //console.log(intersects[0].face);
-    //mesh.paintFace(intersectedFaceId);
+
   }
-  //mouseX = ( event.clientX - windowHalfX ) / 2;
-  //mouseY = ( event.clientY - windowHalfY ) / 2;
 }
 
 //
