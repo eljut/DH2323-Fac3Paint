@@ -11,6 +11,7 @@ var textureLoader = new THREE.TextureLoader();
 var mesh;
 var helper;
 var colorsNeedUpdate;
+var light;
 
 init();
 animate();
@@ -48,8 +49,8 @@ function init() {
   // scene
   scene = new THREE.Scene();
   
-  var ambient = new THREE.AmbientLight( 0x444444 );
-  scene.add( ambient );
+  light = new THREE.AmbientLight( 0x444444 );
+  scene.add( light );
   
   var directionalLight = new THREE.DirectionalLight( 0xffeedd );
   directionalLight.position.set( 0, 0, 1 ).normalize();
@@ -172,3 +173,57 @@ function render() {
   camera.lookAt( scene.position );
   renderer.render( scene, camera );
 }
+
+
+document.onkeydown = changeLight;
+
+function changeLight(e){
+  
+  e = e || window.event;
+
+          if (e.keyCode == '38') {
+            //up
+              light.position.y += 0.5;
+          }
+          else if (e.keyCode == '40') {
+            //down
+               light.position.y -= 0.5;
+
+          }
+          else if (e.keyCode == '37') {
+            //left
+              light.position.x -= 0.5;
+ 
+          }
+          else if (e.keyCode == '39') {
+            //right
+              light.position.x += 0.5;
+
+          }
+          else if(e.keyCode == '65'){
+            //a = ambient
+            scene.remove(light);
+            light = new THREE.AmbientLight( 0x444444 );
+            scene.add( light );
+
+          }
+          else if(e.keyCode == '68'){
+            //d = directional
+            scene.remove(light);
+            light = new THREE.DirectionalLight( 0xffffff );
+            light.position.set( 0, 1, 1 ).normalize();
+            scene.add(light);
+          }  else if (e.keyCode =='80'){
+            //p = point
+            scene.remove(light);
+            light = new THREE.PointLight( (params, 'brushColor'), 1, 100 );
+            light.position.set( 0, 1, 1 ).normalize();
+            scene.add( light );
+          } else if (e.keyCode == '72'){
+            //h = hemisphere
+            scene.remove(light);
+            light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+            scene.add( light );
+          }
+}
+
