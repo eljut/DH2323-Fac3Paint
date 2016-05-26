@@ -83,7 +83,7 @@ function loadLeePerrySmith( callback ) {
   var loader = new THREE.JSONLoader();
   loader.load( 'js/leeperrysmith.js', function( geometry ) {
     var material = new THREE.MeshPhongMaterial( {
-      color: 0x00ffff,
+      color: THREE.Color, //0x00ffff,
       vertexColors: THREE.VertexColors,
       specular: 0x111111,
       map: textureLoader.load( 'lee-perry-smith-head-scan-threejs/Face_Color.jpg' ),
@@ -94,8 +94,9 @@ function loadLeePerrySmith( callback ) {
     } );
     //geometry.faces[ faceIndex ].vertexColors[ vertexIndex ] = new THREE.Color( 0xff0000 );
     mesh = new THREE.Mesh( geometry, material );
-    for (i )
-    mesh.geometry.faces[0].color = new THREE.Color("rgb(255, 0, 0)");
+    // for (i = 0; i < mesh.geometry.faces.length; i++) {
+    //   mesh.geometry.faces[i].color = new THREE.Color("rgb(255, 0, 0)");
+    // }
     scene.add( mesh );
     console.dir(mesh);
     mesh.scale.set( 10, 10, 10 );
@@ -138,9 +139,21 @@ function onDocumentMouseMove( event ) {
     helper.position.copy( intersects[ 0 ].point );
 
     intersectedFaceId = intersects[0].face.id;
-    intersects[0].face.vertexColors = new THREE.Color("rgb(255, 0, 0)");
-    mesh.material.colorsNeedUpdate = true;
-    console.log(intersects[0].face);
+    //intersects[0].face.vertexColors = new THREE.Color("rgb(255, 0, 0)");
+    //mesh.geometry.faces[i].color = new THREE.Color("rgb(255, 0, 0)");
+
+    for (i = 0; i < mesh.geometry.faces.length; i++) {
+      //mesh.geometry.faces[i].vertexColors = new THREE.Color("rgb(255, 0, 0)");
+      //console.log(mesh.geometry.faces[i].normal);
+      if (mesh.geometry.faces[i].normal == intersects[0].face.normal) {
+        //console.log("INTERSECT: ", intersects[0].face.normal);
+        //console.log("MESH: ", mesh.geometry.faces[i].normal);
+        mesh.geometry.faces[i].color.setHex(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
+        //console.log("RESULT: ", mesh.geometry.faces[i]);
+      }
+    }
+    mesh.geometry.colorsNeedUpdate = true;
+    //console.log(intersects[0].face);
     //mesh.paintFace(intersectedFaceId);
   }
   //mouseX = ( event.clientX - windowHalfX ) / 2;
