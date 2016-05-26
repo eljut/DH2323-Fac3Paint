@@ -10,6 +10,7 @@ var obj;
 var textureLoader = new THREE.TextureLoader();
 var mesh;
 var helper;
+var colorsNeedUpdate;
 
 init();
 animate();
@@ -83,6 +84,7 @@ function loadLeePerrySmith( callback ) {
   loader.load( 'js/leeperrysmith.js', function( geometry ) {
     var material = new THREE.MeshPhongMaterial( {
       color: 0x00ffff,
+      vertexColors: THREE.VertexColors,
       specular: 0x111111,
       map: textureLoader.load( 'lee-perry-smith-head-scan-threejs/Face_Color.jpg' ),
       specularMap: textureLoader.load( 'lee-perry-smith-head-scan-threejs/Face_Disp.jpg' ),
@@ -90,8 +92,12 @@ function loadLeePerrySmith( callback ) {
       normalScale: new THREE.Vector2( 0.75, 0.75 ),
       shininess: 25
     } );
+    //geometry.faces[ faceIndex ].vertexColors[ vertexIndex ] = new THREE.Color( 0xff0000 );
     mesh = new THREE.Mesh( geometry, material );
+    for (i )
+    mesh.geometry.faces[0].color = new THREE.Color("rgb(255, 0, 0)");
     scene.add( mesh );
+    console.dir(mesh);
     mesh.scale.set( 10, 10, 10 );
 
     // gui.add(mesh.rotation.x, 'x').min(0.0).max(0.1).step(0.01);
@@ -130,6 +136,12 @@ function onDocumentMouseMove( event ) {
     helper.position.set( 0, 0, 0 );
     helper.lookAt( intersects[ 0 ].face.normal );
     helper.position.copy( intersects[ 0 ].point );
+
+    intersectedFaceId = intersects[0].face.id;
+    intersects[0].face.vertexColors = new THREE.Color("rgb(255, 0, 0)");
+    mesh.material.colorsNeedUpdate = true;
+    console.log(intersects[0].face);
+    //mesh.paintFace(intersectedFaceId);
   }
   //mouseX = ( event.clientX - windowHalfX ) / 2;
   //mouseY = ( event.clientY - windowHalfY ) / 2;
