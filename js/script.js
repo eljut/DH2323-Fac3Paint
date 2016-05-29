@@ -39,6 +39,7 @@ var updateBrushColor = function() {
   var hex = facecolorObj.getHexString();
   //var str = "0x";
   chosenBrushColor = hex;
+  helper.material.color.setHex("0x" + chosenBrushColor);
 }
 
 var update = function() {
@@ -110,7 +111,8 @@ function helper() {
   var geometry = new THREE.CylinderGeometry( 0, 1, 8, 5 ); // Right now hardcoded measurments.
   geometry.translate( 0, 4, 0 ); //needs to be changed based on cylinder measurments!
   geometry.rotateX( Math.PI / 2 );
-  helper = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+  helper = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial() );
+  helper.material.color.setHex("0x" + chosenBrushColor);
   scene.add( helper );
 }
 
