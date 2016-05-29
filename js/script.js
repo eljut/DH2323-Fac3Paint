@@ -23,6 +23,7 @@ var params = {
   brushColor: "#dc47b8",
   brushSize: 10,
   opacity: 1,
+  Rainbow: false,
 };
 
 var gui = new dat.GUI();
@@ -35,11 +36,19 @@ var updateSkinColor = function () {
 };
 
 var updateBrushColor = function() {
-  var facecolorObj = new THREE.Color( params.brushColor );
-  var hex = facecolorObj.getHexString();
+
+  if (params.Rainbow == true) {
+    var hexes = ["f20e0e", "430ef2", "0ef2e4", "0ef286", "5ef20e", "f2f10e", "f2a10e", "f20ec9", "772fde"];
+    var randHex = hexes[Math.floor(Math.random() * 8)];
+    chosenBrushColor = randHex;
+    helper.material.color.setHex("0x" + chosenBrushColor);
+  } else {
+    var facecolorObj = new THREE.Color( params.brushColor );
+    var hex = facecolorObj.getHexString();
   //var str = "0x";
-  chosenBrushColor = hex;
-  helper.material.color.setHex("0x" + chosenBrushColor);
+    chosenBrushColor = hex;
+    helper.material.color.setHex("0x" + chosenBrushColor);
+  }
 }
 
 var update = function() {
@@ -50,6 +59,7 @@ gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
 gui.add(params, 'brushSize', 0, 20).onChange(update);
 gui.add(params, 'opacity', 0, 1).onChange(update);
+gui.add(params, 'Rainbow').onChange(updateBrushColor);
 
 function init() {
   container = document.createElement( 'div' );
@@ -156,6 +166,7 @@ function onDocumentMouseMove( event ) {
           //console.log("RESULT: ", mesh.geometry.faces[i]);
         }
       }
+      updateBrushColor();
       mesh.geometry.colorsNeedUpdate = true;
     }
 
