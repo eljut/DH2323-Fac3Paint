@@ -14,6 +14,7 @@ var colorsNeedUpdate;
 var light;
 var chosenBrushColor = "dc47b8";
 var mouseDown;
+var rainbow = false;
 
 init();
 animate();
@@ -42,7 +43,9 @@ var updateBrushColor = function() {
     var randHex = hexes[Math.floor(Math.random() * 8)];
     chosenBrushColor = randHex;
     helper.material.color.setHex("0x" + chosenBrushColor);
+    rainbow = true;
   } else {
+    rainbow = false;
     var facecolorObj = new THREE.Color( params.brushColor );
     var hex = facecolorObj.getHexString();
   //var str = "0x";
@@ -109,11 +112,42 @@ function loadLeePerrySmith( callback ) {
       shininess: 25
     } );
 
+    for (i = 0; i < geometry.faces.length; i++) {
+      face = geometry.faces[i];
+      numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+      for (j = 0; j < numberOfSides; j++) {
+        geometry.faces[ i ].vertexColors[ j ] = new THREE.Color( 0xffffff );
+      }
+    }
+    // for (i = 0; i < geometry.faces.length; i++) {
+    //   face = geometry.faces[i];
+    //   numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+    //   for (j = 0; j < numberOfSides; j++) {
+    //     color = new THREE.Color( 0xffffff );
+    //     //color.setHSL(0.125 * j/mesh.geometry.faces.length, 1.0, 0.5);
+    //     color.setHex( 0xffffff );
+    //     geometry.faces[i].vertexColors[ j ] = color;
+    //     //console.log(geometry.faces[i].vertexColors);
+    //   }
+    // }
+
+    // for (i = 0; i < geometry.faces.length; i++) {
+    //   face = geometry.faces[i];
+    //   numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+    //   for (j = 0; j < numberOfSides; j++) {
+    //     color = new THREE.Color( 0xffffff );
+    //     //color.setHSL(0.125 * j/mesh.geometry.faces.length, 1.0, 0.5);
+    //     color.setHex( Math.random() * 0xffffff );
+    //     geometry.faces[i].vertexColors[ j ] = color;
+    //     //console.log(geometry.faces[i].vertexColors);
+    //   }
+    // }
+
     mesh = new THREE.Mesh( geometry, material );
 
     scene.add( mesh );
     //console.dir(mesh);
-    mesh.scale.set( 10, 10, 10 );
+    mesh.scale.set( 14, 14, 14 );
   } );
 }
 
@@ -147,6 +181,8 @@ function onDocumentMouseMove( event ) {
   mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
   raycaster.setFromCamera( mouse, camera );
+
+  //console.log(mesh.geometry);
   // See if the ray from the camera into the world hits mesh
   var intersects = raycaster.intersectObject( mesh );
   // Toggle rotation bool for meshes that we clicked
@@ -162,12 +198,34 @@ function onDocumentMouseMove( event ) {
         if (mesh.geometry.faces[i].normal == intersects[0].face.normal) {
           //console.log("INTERSECT: ", intersects[0].face.normal);
           //console.log("MESH: ", mesh.geometry.faces[i].normal);
-          mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);//(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
+          //mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);//(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
           //console.log("RESULT: ", mesh.geometry.faces[i]);
+          //console.log(mesh.geometry.faces[i].color);
+          // initialize color variable
+          face = mesh.geometry.faces[i];
+          numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+          for (j = 0; j < numberOfSides; j++) {
+            if ( rainbow == true ) {
+              color = new THREE.Color( 0xffffff );
+              //color.setHSL(0.125 * j/mesh.geometry.faces.length, 1.0, 0.5);
+              color.setHex( Math.random() * 0xffffff );
+              mesh.geometry.faces[i].vertexColors[ j ].setHSL( Math.random(), 0.5, 0.5 ); //= color;
+              //console.log(mesh.geometry.faces[i].vertexColors);
+            }
+            else {
+              color = new THREE.Color( 0xffffff );
+              color.setHex( "0x" + chosenBrushColor );
+              mesh.geometry.faces[i].vertexColors[ j ].setHex( "0x" + chosenBrushColor );//setHSL( Math.random(), 0.5, 0.5 );
+              //mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);
+            }
+          }
         }
       }
+      
       updateBrushColor();
       mesh.geometry.colorsNeedUpdate = true;
+      mesh.geometry.elementsNeedUpdate = true;
+      mesh.geometry.faces.needsUpdate = true;
     }
 
   }
