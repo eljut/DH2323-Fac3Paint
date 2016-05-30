@@ -294,14 +294,20 @@ function changeLight(e){
           }  else if (e.keyCode =='80'){
             //p = point
             scene.remove(light);
-            light = new THREE.PointLight( lightColor, 1, 100 );
-            light.position.set( 0, 1, 1 ).normalize();
+            light = new THREE.PointLight( lightColor, 2, 30 );
+            light.position.set( 0, 0, 37 );
             scene.add( light );
           } else if (e.keyCode == '72'){
             //h = hemisphere
             scene.remove(light);
             light = new THREE.HemisphereLight( lightColor, 0x080820, 1 );
             scene.add( light );
+          } else if(e.keyCode == "171"){
+            // + = add distance for pointlight
+            light.distance += 1;
+          } else if(e.keyCode == "173"){
+            // - = shrink distance for pointlight
+            light.distance -= 1;
           }
 }
 
