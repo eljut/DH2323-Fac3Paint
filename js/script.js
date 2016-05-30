@@ -298,3 +298,16 @@ function changeLight(e){
           }
 }
 
+//toggles the about text on the main page
+var showAbout = false;
+//when clicking on "about", toggle visibility of the text
+function toggleAbout(){
+  if (showAbout){
+    document.getElementById("about").style.visibility = "visible";
+  } else {
+    document.getElementById("about").style.visibility = "hidden";
+  }
+
+  showAbout = !showAbout;
+}
+
