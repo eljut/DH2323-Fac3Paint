@@ -1,3 +1,32 @@
 .selector {
        width: 127px !important;
 }
+
+body {
+	background: black;
+	color: white;
+	font-family: 'Open Sans', sans-serif;
+	margin: 20px;
+}
+
+h1{
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
+}
+
+.bold {
+	font-weight: 900;
+	display: inline-block;
+}
+
+#abouttitle {
+	font-weight: bold;
+	cursor: pointer;
+	margin-top: 30px;
+}
+
+#about{
+	visibility: hidden;
+	position: absolute;
+	font-weight: 300;
+}
