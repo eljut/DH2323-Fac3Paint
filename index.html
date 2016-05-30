@@ -2,12 +2,25 @@
 <html>
 
 	<head>
-		<title>DGI16</title>
+		<title>Fac3Paint</title>
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 		<link rel="stylesheet" type="text/css" href="stylesheet.css">
 		<meta charset="utf-8">
+				<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Lato:400,900,300' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
+		<h1><div class="bold">Fac3</div>Paint</h1>
+		<p id="abouttitle" onclick="toggleAbout()">About</p>
+		<div id="about">
+			<p>Controls for lighting</p>
+			<p>A = AmbientLight</p>
+			<p>D = DirectionalLight</p>
+			<p>P = PointLight</p>
+			<p>H = HemisphereLight</p>
+			<p>Move the light with directional arrows</p>
+		</div>
+		
 		<script src="//cdn.rawgit.com/mrdoob/three.js/master/build/three.min.js"></script>
 		<script src="js/dat.gui.min.js"></script>
 		<script src="js/script.js"></script>
