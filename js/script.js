@@ -16,6 +16,7 @@ var chosenBrushColor = "dc47b8";
 var mouseDown;
 var rainbow = false;
 var lightColor =  0x444444;
+var directionalLight;
 
 init();
 animate();
@@ -27,6 +28,7 @@ var params = {
   brushSize: 10,
   opacity: 1,
   Rainbow: false,
+  defaultLight: true,
 };
 
 var gui = new dat.GUI();
@@ -56,8 +58,18 @@ var updateBrushColor = function() {
   }
 }
 
+//for chanhing the color of the light
 var updateLightColor = function(){
   lightColor = new THREE.Color( params.lightColor );
+}
+
+//for turning on and off the default directional light
+var updateLight = function(){
+  if (params.defaultLight) {
+    scene.add( directionalLight );
+  } else if (!params.defaultLight){
+    scene.remove( directionalLight );
+  }
 }
 
 var update = function() {
@@ -70,6 +82,7 @@ gui.addColor(params, 'lightColor').onChange(updateLightColor);
 gui.add(params, 'brushSize', 0, 20).onChange(update);
 gui.add(params, 'opacity', 0, 1).onChange(update);
 gui.add(params, 'Rainbow').onChange(updateBrushColor);
+gui.add(params, 'defaultLight').onChange(updateLight);
 
 function init() {
   container = document.createElement( 'div' );
@@ -86,7 +99,7 @@ function init() {
   light = new THREE.AmbientLight( 0x444444 );
   scene.add( light );
   
-  var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+  directionalLight = new THREE.DirectionalLight( 0xffeedd );
   directionalLight.position.set( 0, 0, 1 ).normalize();
   scene.add( directionalLight );
 
