@@ -287,7 +287,7 @@ function changeLight(e){
           }  else if (e.keyCode =='80'){
             //p = point
             scene.remove(light);
-            light = new THREE.PointLight( (params, 'brushColor'), 1, 100 );
+            light = new THREE.PointLight( 0xff0000, 1, 100 );
             light.position.set( 0, 1, 1 ).normalize();
             scene.add( light );
           } else if (e.keyCode == '72'){
