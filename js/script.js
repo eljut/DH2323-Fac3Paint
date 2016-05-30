@@ -15,6 +15,7 @@ var light;
 var chosenBrushColor = "dc47b8";
 var mouseDown;
 var rainbow = false;
+var lightColor =  0x444444;
 
 init();
 animate();
@@ -22,6 +23,7 @@ animate();
 var params = {
   faceColor: "#ffffcc",
   brushColor: "#dc47b8",
+  lightColor: "#444444",
   brushSize: 10,
   opacity: 1,
   Rainbow: false,
@@ -54,12 +56,17 @@ var updateBrushColor = function() {
   }
 }
 
+var updateLightColor = function(){
+  lightColor = new THREE.Color( params.lightColor );
+}
+
 var update = function() {
 
 }
 
 gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
+gui.addColor(params, 'lightColor').onChange(updateLightColor);
 gui.add(params, 'brushSize', 0, 20).onChange(update);
 gui.add(params, 'opacity', 0, 1).onChange(update);
 gui.add(params, 'Rainbow').onChange(updateBrushColor);
@@ -274,26 +281,26 @@ function changeLight(e){
           else if(e.keyCode == '65'){
             //a = ambient
             scene.remove(light);
-            light = new THREE.AmbientLight( 0x444444 );
+            light = new THREE.AmbientLight( lightColor );
             scene.add( light );
 
           }
           else if(e.keyCode == '68'){
             //d = directional
             scene.remove(light);
-            light = new THREE.DirectionalLight( 0xffffff );
+            light = new THREE.DirectionalLight( lightColor );
             light.position.set( 0, 1, 1 ).normalize();
             scene.add(light);
           }  else if (e.keyCode =='80'){
             //p = point
             scene.remove(light);
-            light = new THREE.PointLight( 0xff0000, 1, 100 );
+            light = new THREE.PointLight( lightColor, 1, 100 );
             light.position.set( 0, 1, 1 ).normalize();
             scene.add( light );
           } else if (e.keyCode == '72'){
             //h = hemisphere
             scene.remove(light);
-            light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+            light = new THREE.HemisphereLight( lightColor, 0x080820, 1 );
             scene.add( light );
           }
 }
