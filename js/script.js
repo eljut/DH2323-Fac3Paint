@@ -1,5 +1,5 @@
 var container, stats;
-var camera, scene, renderer;
+var camera, controls, scene, renderer;
 var mouseX = 0, mouseY = 0;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -92,7 +92,7 @@ function init() {
   camera.position.z = 100;
   //camera.position.x = 8;
   //camera.position.y = 8;
-
+  
   // scene
   scene = new THREE.Scene();
   
@@ -114,6 +114,14 @@ function init() {
   container.addEventListener( 'mousedown', onDocumentMouseDown, false );
   container.addEventListener( 'mouseup', onDocumentMouseUp, false );
   container.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+  //controls, after the renderer
+  controls = new THREE.OrbitControls( camera, renderer.domElement );
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.25;
+  controls.enableZoom = false;
+
+
   //
   window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -254,7 +262,8 @@ function onDocumentMouseMove( event ) {
 
 //
 function animate() {
-  requestAnimationFrame( animate );
+  requestAnimationFrame( animate );  //HÄRRRR
+  controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
   render();
 }
 
