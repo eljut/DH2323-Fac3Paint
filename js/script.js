@@ -18,6 +18,7 @@ var chosenSkinColor;
 var mouseDown;
 var rainbow = false;
 var gradient = false;
+var erase = false;
 var lightColor =  0x444444;
 var directionalLight;
 
@@ -29,6 +30,7 @@ var params = {
   brushColor: "#dc47b8",
   Rainbow: false,
   Gradient: false,
+  Erase: false,
   Clear: function() {
     for (i = 0; i < mesh.geometry.faces.length; i++) {
       face = mesh.geometry.faces[i];
@@ -54,7 +56,13 @@ var updateSkinColor = function () {
 
 var updateBrushColor = function() {
 
+  if (erase == params.Erase && erase == true) {
+
+  }
+
   if (params.Rainbow == true) {
+    params['Rainbow'] = true;
+    params['Erase'] = false;
     var hexes = ["f20e0e", "430ef2", "0ef2e4", "0ef286", "5ef20e", "f2f10e", "f2a10e", "f20ec9", "772fde"];
     var randHex = hexes[Math.floor(Math.random() * 8)];
     chosenBrushColor = randHex;
@@ -68,19 +76,46 @@ var updateBrushColor = function() {
     helper.material.color.setHex("0x" + chosenBrushColor);
   }
   if (params.Gradient == true) {
+    params['Gradient'] = true;
+    params['Erase'] = false;
     gradient = true;
   } else {
     gradient = false;
+  }
+  if (params.Erase == true) {
+    params['Erase'] = true;
+    params['Gradient'] = false;
+    params['Rainbow'] = false;
+    chosenBrushColor = "ffffff";
+  } else {
+    //params['Erase'] = false;
   }
 }
 
 gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
-gui.add(params, 'Rainbow').onChange(updateBrushColor);
-gui.add(params, 'Gradient').onChange(updateBrushColor);
+gui.add(params, 'Rainbow').listen().onChange(updateBrushColor);
+gui.add(params, 'Gradient').listen().onChange(updateBrushColor);
+gui.add(params, 'Erase').listen().onChange(updateBrushColor);
 gui.add(params, 'Clear');
 
 function init() {
+
+  manager = new THREE.LoadingManager();
+
+  manager.onProgress = function(item, loaded, total) {
+    console.log(item, loaded, total);
+  }
+
+  manager.onLoad = function() {
+    console.log('all items loaded');
+  }
+
+  manager.onError = function() {
+    console.log('ERROR loading');
+  }
+
+
   container = document.createElement( 'div' );
   document.body.appendChild( container );
 
@@ -113,7 +148,8 @@ function init() {
 }
 
 function loadLeePerrySmith( callback ) {
-  var loader = new THREE.JSONLoader();
+  console.log("Loading...");
+  var loader = new THREE.JSONLoader(manager);
   loader.load( 'js/leeperrysmith.js', function( geometry ) {
     var material = new THREE.MeshPhongMaterial( {
       color: THREE.Color, //0x00ffff,
