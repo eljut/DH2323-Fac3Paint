@@ -12,15 +12,12 @@ var mesh;
 var geometry;
 var helper;
 var colorsNeedUpdate;
-var light;
 var chosenBrushColor = "dc47b8";
 var chosenSkinColor;
 var mouseDown;
 var rainbow = false;
 var gradient = false;
 var erase = false;
-var lightColor =  0x444444;
-var directionalLight;
 
 init();
 animate();
@@ -54,49 +51,69 @@ var updateSkinColor = function () {
     mesh.material.color.setHex("0x" + hex);
 };
 
+//function for updating the brush, color and "type" of brush
 var updateBrushColor = function() {
 
-  if (erase == params.Erase && erase == true) {
-
+  //if either rainbow or gradient is checked, remove the eraser checker from the gui
+  if (params.Rainbow || params.Gradient){
+    params['Erase'] = false;
   }
 
+  //rainbow brush, for a rainbow effect
   if (params.Rainbow == true) {
-    params['Rainbow'] = true;
-    params['Erase'] = false;
+    console.log("rainbow");
     var hexes = ["f20e0e", "430ef2", "0ef2e4", "0ef286", "5ef20e", "f2f10e", "f2a10e", "f20ec9", "772fde"];
     var randHex = hexes[Math.floor(Math.random() * 8)];
     chosenBrushColor = randHex;
     helper.material.color.setHex("0x" + chosenBrushColor);
     rainbow = true;
   } else {
+    //if rainbow is set to false, reset to the previous brush color
     rainbow = false;
     var facecolorObj = new THREE.Color( params.brushColor );
     var hex = facecolorObj.getHexString();
     chosenBrushColor = hex;
     helper.material.color.setHex("0x" + chosenBrushColor);
   }
+
+  //when graident is checked, toggle the gradient boolean
   if (params.Gradient == true) {
-    params['Gradient'] = true;
-    params['Erase'] = false;
     gradient = true;
   } else {
     gradient = false;
   }
-  if (params.Erase == true) {
-    params['Erase'] = true;
-    params['Gradient'] = false;
-    params['Rainbow'] = false;
-    chosenBrushColor = "ffffff";
-  } else {
-    //params['Erase'] = false;
-  }
+
 }
 
+//function controlling the eraser
+function updateErase(){
+
+  if (params.Erase){
+      //set rainbow and gradient to false if eraser is checked
+      params['Gradient'] = false;
+      params['Rainbow'] = false;
+
+      gradient = false;
+      rainbow = false;
+
+      //set brush color to white to get an erasing effect
+      chosenBrushColor = "ffffff";
+      helper.material.color.setHex("0x" + chosenBrushColor);
+      console.log(helper.material.color);
+  } else if(!params.Erase){
+      //if eraser is unchecked, go back to the previous brush color
+      chosenBrushColor = new THREE.Color(params.brushColor).getHexString();
+      helper.material.color.setStyle(params.brushColor);
+  }
+
+}
+
+//add controllers to the gui
 gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
 gui.add(params, 'Rainbow').listen().onChange(updateBrushColor);
 gui.add(params, 'Gradient').listen().onChange(updateBrushColor);
-gui.add(params, 'Erase').listen().onChange(updateBrushColor);
+gui.add(params, 'Erase').listen().onChange(updateErase);
 gui.add(params, 'Clear');
 
 function init() {
@@ -148,6 +165,7 @@ function init() {
   window.addEventListener( 'resize', onWindowResize, false );
 }
 
+//load the 3D model
 function loadLeePerrySmith( callback ) {
   console.log("Loading...");
   var loader = new THREE.JSONLoader(manager);
@@ -179,6 +197,7 @@ function loadLeePerrySmith( callback ) {
   } );
 }
 
+//the brush helper (a cone following the 3D surface)
 function helper() {
   var geometry = new THREE.CylinderGeometry( 0, 1, 8, 5 ); // Right now hardcoded measurments.
   geometry.translate( 0, 4, 0 ); //needs to be changed based on cylinder measurments!
@@ -210,12 +229,12 @@ function onDocumentMouseMove( event ) {
   
 }
 
+//draw function for coloring the 3D model
 function draw() {
   mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
   raycaster.setFromCamera( mouse, camera );
 
-  //console.log(mesh.geometry);
   // See if the ray from the camera into the world hits mesh
   var intersects = raycaster.intersectObject( mesh );
   // Toggle rotation bool for meshes that we clicked
@@ -266,7 +285,11 @@ function draw() {
         }
       }
       
-      updateBrushColor();
+      //if rainbow is enabled, the color of the brush has to be updated with each "stroke"
+      if (rainbow) {
+         updateBrushColor();
+      }
+     
       mesh.geometry.colorsNeedUpdate = true;
       mesh.geometry.elementsNeedUpdate = true;
       mesh.geometry.faces.needsUpdate = true;
@@ -295,6 +318,7 @@ function render() {
 
 //toggles the about text on the main page
 var showAbout = false;
+
 //when clicking on "about", toggle visibility of the text
 function toggleAbout(){
   if (showAbout){
