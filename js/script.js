@@ -13,8 +13,10 @@ var helper;
 var colorsNeedUpdate;
 var light;
 var chosenBrushColor = "dc47b8";
+var chosenSkinColor;
 var mouseDown;
 var rainbow = false;
+var gradient = false;
 var lightColor =  0x444444;
 var directionalLight;
 
@@ -25,6 +27,7 @@ var params = {
   faceColor: "#ffffcc",
   brushColor: "#dc47b8",
   Rainbow: false,
+  Gradient: false,
 };
 
 var gui = new dat.GUI();
@@ -32,6 +35,7 @@ var gui = new dat.GUI();
 var updateSkinColor = function () {
     var facecolorObj = new THREE.Color( params.faceColor );
     var hex = facecolorObj.getHexString();
+    chosenSkinColor = hex;
     //var css = facecolorObj.getStyle();
     mesh.material.color.setHex("0x" + hex);
 };
@@ -52,6 +56,11 @@ var updateBrushColor = function() {
     chosenBrushColor = hex;
     helper.material.color.setHex("0x" + chosenBrushColor);
   }
+  if (params.Gradient == true) {
+    gradient = true;
+  } else {
+    gradient = false;
+  }
 }
 
 var update = function() {
@@ -61,6 +70,7 @@ var update = function() {
 gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
 gui.add(params, 'Rainbow').onChange(updateBrushColor);
+gui.add(params, 'Gradient').onChange(updateBrushColor);
 
 function init() {
   container = document.createElement( 'div' );
@@ -176,6 +186,7 @@ function onWindowResize() {
 
 function onDocumentMouseDown( event ) {
   mouseDown = true;
+  draw();
 }
 
 function onDocumentMouseUp( event ) {
@@ -183,7 +194,11 @@ function onDocumentMouseUp( event ) {
 }
 
 function onDocumentMouseMove( event ) {
+  draw();
+  
+}
 
+function draw() {
   mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
   mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
   raycaster.setFromCamera( mouse, camera );
@@ -205,27 +220,35 @@ function onDocumentMouseMove( event ) {
       for (i = 0; i < mesh.geometry.faces.length; i++) {
 
         if (mesh.geometry.faces[i].normal == intersects[0].face.normal) {
-          //console.log("INTERSECT: ", intersects[0].face.normal);
-          //console.log("MESH: ", mesh.geometry.faces[i].normal);
-          //mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);//(0x00ffff); //= new THREE.Color("rgb(255, 0, 0)");
-          //console.log("RESULT: ", mesh.geometry.faces[i]);
-          //console.log(mesh.geometry.faces[i].color);
           // initialize color variable
           face = mesh.geometry.faces[i];
           numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
           for (j = 0; j < numberOfSides; j++) {
             if ( rainbow == true ) {
-              color = new THREE.Color( 0xffffff );
-              //color.setHSL(0.125 * j/mesh.geometry.faces.length, 1.0, 0.5);
-              color.setHex( Math.random() * 0xffffff );
-              mesh.geometry.faces[i].vertexColors[ j ].setHSL( Math.random(), 0.5, 0.5 ); //= color;
-              //console.log(mesh.geometry.faces[i].vertexColors);
+              if ( gradient == true ) {
+                color = new THREE.Color( 0xffffff );
+                //color.setHSL(0.125 * j/mesh.geometry.faces.length, 1.0, 0.5);
+                color.setHex( Math.random() * 0xffffff );
+                mesh.geometry.faces[i].vertexColors[ j ].setHSL( Math.random(), 0.5, 0.5 ); //= color;
+                //console.log(mesh.geometry.faces[i].vertexColors);
+              } else {     
+                mesh.geometry.faces[i].vertexColors[ j ].setHex( "0x" + chosenBrushColor );
+              }
             }
             else {
-              color = new THREE.Color( 0xffffff );
-              color.setHex( "0x" + chosenBrushColor );
-              mesh.geometry.faces[i].vertexColors[ j ].setHex( "0x" + chosenBrushColor );//setHSL( Math.random(), 0.5, 0.5 );
-              //mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);
+              if ( gradient == true ) {
+                color = new THREE.Color( 0xffffff );
+                color.setHex( "0x" + chosenBrushColor );
+                mesh.geometry.faces[i].vertexColors[ 0 ].setHex( "0x" + chosenBrushColor );//setHSL( Math.random(), 0.5, 0.5 );
+                mesh.geometry.faces[i].vertexColors[ 1 ].setHex( "0x" + chosenBrushColor );
+                mesh.geometry.faces[i].vertexColors[ 2 ].setHex( 0xffffff );
+                //mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);
+              } else {
+                color = new THREE.Color( 0xffffff );
+                color.setHex( "0x" + chosenBrushColor );
+                mesh.geometry.faces[i].vertexColors[ j ].setHex( "0x" + chosenBrushColor );//setHSL( Math.random(), 0.5, 0.5 );
+                //mesh.geometry.faces[i].color.setHex("0x" + chosenBrushColor);
+              }
             }
           }
         }
@@ -241,8 +264,8 @@ function onDocumentMouseMove( event ) {
     helper.visible = false;
     document.body.style.cursor = 'default';
   }
-}
 
+}
 
 //
 function animate() {
@@ -256,65 +279,6 @@ function render() {
   //camera.position.y += ( - mouseY - camera.position.y ) * .05;
   camera.lookAt( scene.position );
   renderer.render( scene, camera );
-}
-
-
-document.onkeydown = changeLight;
-
-function changeLight(e){
-  
-  e = e || window.event;
-
-          if (e.keyCode == '38') {
-            //up
-              light.position.y += 0.5;
-          }
-          else if (e.keyCode == '40') {
-            //down
-               light.position.y -= 0.5;
-
-          }
-          else if (e.keyCode == '37') {
-            //left
-              light.position.x -= 0.5;
- 
-          }
-          else if (e.keyCode == '39') {
-            //right
-              light.position.x += 0.5;
-
-          }
-          else if(e.keyCode == '65'){
-            //a = ambient
-            scene.remove(light);
-            light = new THREE.AmbientLight( lightColor );
-            scene.add( light );
-
-          }
-          else if(e.keyCode == '68'){
-            //d = directional
-            scene.remove(light);
-            light = new THREE.DirectionalLight( lightColor );
-            light.position.set( 0, 1, 1 ).normalize();
-            scene.add(light);
-          }  else if (e.keyCode =='80'){
-            //p = point
-            scene.remove(light);
-            light = new THREE.PointLight( lightColor, 2, 30 );
-            light.position.set( 0, 0, 37 );
-            scene.add( light );
-          } else if (e.keyCode == '72'){
-            //h = hemisphere
-            scene.remove(light);
-            light = new THREE.HemisphereLight( lightColor, 0x080820, 1 );
-            scene.add( light );
-          } else if(e.keyCode == "171"){
-            // + = add distance for pointlight
-            light.distance += 1;
-          } else if(e.keyCode == "173"){
-            // - = shrink distance for pointlight
-            light.distance -= 1;
-          }
 }
 
 //toggles the about text on the main page
