@@ -194,6 +194,8 @@ function onDocumentMouseMove( event ) {
   // Toggle rotation bool for meshes that we clicked
   if ( intersects.length > 0 ) {
     controls.enabled = false;
+    helper.visible = true;
+    document.body.style.cursor = 'none';
     helper.position.set( 0, 0, 0 );
     helper.lookAt( intersects[ 0 ].face.normal );
     helper.position.copy( intersects[ 0 ].point );
@@ -236,6 +238,8 @@ function onDocumentMouseMove( event ) {
     }
   } else {
     controls.enabled = true;
+    helper.visible = false;
+    document.body.style.cursor = 'default';
   }
 }
 
