@@ -24,11 +24,7 @@ animate();
 var params = {
   faceColor: "#ffffcc",
   brushColor: "#dc47b8",
-  lightColor: "#444444",
-  brushSize: 10,
-  opacity: 1,
   Rainbow: false,
-  defaultLight: true,
 };
 
 var gui = new dat.GUI();
@@ -58,31 +54,13 @@ var updateBrushColor = function() {
   }
 }
 
-//for chanhing the color of the light
-var updateLightColor = function(){
-  lightColor = new THREE.Color( params.lightColor );
-}
-
-//for turning on and off the default directional light
-var updateLight = function(){
-  if (params.defaultLight) {
-    scene.add( directionalLight );
-  } else if (!params.defaultLight){
-    scene.remove( directionalLight );
-  }
-}
-
 var update = function() {
 
 }
 
 gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
-gui.addColor(params, 'lightColor').onChange(updateLightColor);
-gui.add(params, 'brushSize', 0, 20).onChange(update);
-gui.add(params, 'opacity', 0, 1).onChange(update);
 gui.add(params, 'Rainbow').onChange(updateBrushColor);
-gui.add(params, 'defaultLight').onChange(updateLight);
 
 function init() {
   container = document.createElement( 'div' );
@@ -96,12 +74,12 @@ function init() {
   // scene
   scene = new THREE.Scene();
   
-  light = new THREE.AmbientLight( 0x444444 );
-  scene.add( light );
+  // light = new THREE.AmbientLight( 0x444444 );
+  // scene.add( light );
   
-  directionalLight = new THREE.DirectionalLight( 0xffeedd );
-  directionalLight.position.set( 0, 0, 1 ).normalize();
-  scene.add( directionalLight );
+  // directionalLight = new THREE.DirectionalLight( 0xffeedd );
+  // directionalLight.position.set( 0, 0, 1 ).normalize();
+  // scene.add( directionalLight );
 
   loadLeePerrySmith();
 
@@ -215,6 +193,7 @@ function onDocumentMouseMove( event ) {
   var intersects = raycaster.intersectObject( mesh );
   // Toggle rotation bool for meshes that we clicked
   if ( intersects.length > 0 ) {
+    controls.enabled = false;
     helper.position.set( 0, 0, 0 );
     helper.lookAt( intersects[ 0 ].face.normal );
     helper.position.copy( intersects[ 0 ].point );
@@ -255,7 +234,8 @@ function onDocumentMouseMove( event ) {
       mesh.geometry.elementsNeedUpdate = true;
       mesh.geometry.faces.needsUpdate = true;
     }
-
+  } else {
+    controls.enabled = true;
   }
 }
 
