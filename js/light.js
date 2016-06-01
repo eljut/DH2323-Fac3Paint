@@ -20,6 +20,15 @@ function setupLight(){
 
 }
 
+//removes all lights from the scene
+function removeAllLights(){
+
+	scene.remove(ambientLight);
+	scene.remove(directionalLight);
+	scene.remove(pointLight);
+
+}
+
 //add light parameters to the parameter array
 
 //ambient light
@@ -42,6 +51,17 @@ params.pointLightZ = 37;
 params.pointLightDistance = 30;
 params.pointLightIntensity = 2;
 
+//reset light
+params.resetLight = function(){
+	removeAllLights();
+	setupLight();
+
+	//set the gui parameters to default
+	params["ambientLight"] = true;
+	params["directionalLight"] = true;
+	params["pointLight"] = false;
+	
+};
 
 //----------------GUI CONTROLS-----------------------
 
@@ -52,7 +72,7 @@ var lightFolder = gui.addFolder('Lights');
 var ambientLightFolder = lightFolder.addFolder("Ambient Light"); //gui folder
 
 //turn on and off
-ambientLightFolder.add(params, 'ambientLight').onChange(function(){
+ambientLightFolder.add(params, 'ambientLight').listen().onChange(function(){
 	if (params.ambientLight) {
 		scene.add( ambientLight );
 	} else if (!params.ambientLight){
@@ -68,7 +88,7 @@ ambientLightFolder.addColor(params, 'ambientLightColor').onChange(function(){
 var directionalLightFolder = lightFolder.addFolder("Directional Light");
 
 //turn on and off
-directionalLightFolder.add(params, "directionalLight").onChange(function(){
+directionalLightFolder.add(params, "directionalLight").listen().onChange(function(){
 	if (params.directionalLight) {
 		scene.add( directionalLight );
 	} else if (!params.directionalLight){
@@ -96,7 +116,7 @@ directionalLightFolder.add(params, "directionalLightZ", -10, 10).onChange(functi
 var pointLightFolder = lightFolder.addFolder("Point Light");
 
 //turn on and off
-pointLightFolder.add(params, "pointLight").onChange(function(){
+pointLightFolder.add(params, "pointLight").listen().onChange(function(){
 	if (params.pointLight) {
 		scene.add( pointLight );
 	} else if (!params.pointLight){
@@ -127,6 +147,9 @@ pointLightFolder.add(params, "pointLightDistance", 0, 70).onChange(function(){
 pointLightFolder.add(params, "pointLightIntensity", 0, 10).onChange(function(){
 	pointLight.intensity = params.pointLightIntensity;
 })
+
+// reset light
+lightFolder.add(params, 'resetLight');
 
 
 //run the setupLight function to create the default lights for the scene
