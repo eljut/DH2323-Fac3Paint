@@ -123,6 +123,7 @@ function init() {
 
   manager.onLoad = function() {
     console.log('all items loaded');
+    document.getElementsByClassName('loader')[0].style.display='none';
   }
 
   manager.onError = function() {
