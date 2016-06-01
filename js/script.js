@@ -106,7 +106,7 @@ function init() {
   controls = new THREE.OrbitControls( camera, renderer.domElement );
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
 
   //
   window.addEventListener( 'resize', onWindowResize, false );
