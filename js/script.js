@@ -56,13 +56,13 @@ var updateSkinColor = function () {
 
 var updateBrushColor = function() {
 
-  if (erase == params.Erase && erase == true) {
-
+  //if either rainbow or gradient is checked, remove the eraser checker
+  if (params.Rainbow || params.Gradient){
+    params['Erase'] = false;
   }
 
   if (params.Rainbow == true) {
-    params['Rainbow'] = true;
-    params['Erase'] = false;
+    console.log("rainbow");
     var hexes = ["f20e0e", "430ef2", "0ef2e4", "0ef286", "5ef20e", "f2f10e", "f2a10e", "f20ec9", "772fde"];
     var randHex = hexes[Math.floor(Math.random() * 8)];
     chosenBrushColor = randHex;
@@ -75,28 +75,42 @@ var updateBrushColor = function() {
     chosenBrushColor = hex;
     helper.material.color.setHex("0x" + chosenBrushColor);
   }
+
+
   if (params.Gradient == true) {
-    params['Gradient'] = true;
-    params['Erase'] = false;
+
     gradient = true;
   } else {
     gradient = false;
   }
-  if (params.Erase == true) {
-    params['Erase'] = true;
-    params['Gradient'] = false;
-    params['Rainbow'] = false;
-    chosenBrushColor = "ffffff";
-  } else {
-    //params['Erase'] = false;
+
+}
+
+function updateErase(){
+
+  if (params.Erase){
+      //set rainbow and gradient to false
+      params['Gradient'] = false;
+      params['Rainbow'] = false;
+
+      gradient = false;
+      rainbow = false;
+
+      chosenBrushColor = "ffffff";
+      helper.material.color.setHex("0x" + chosenBrushColor);
+      console.log(helper.material.color);
+  } else if(!params.Erase){
+      chosenBrushColor = new THREE.Color(params.brushColor).getHexString();
+      helper.material.color.setStyle(params.brushColor);
   }
+
 }
 
 gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
 gui.add(params, 'Rainbow').listen().onChange(updateBrushColor);
 gui.add(params, 'Gradient').listen().onChange(updateBrushColor);
-gui.add(params, 'Erase').listen().onChange(updateBrushColor);
+gui.add(params, 'Erase').listen().onChange(updateErase);
 gui.add(params, 'Clear');
 
 function init() {
@@ -265,7 +279,10 @@ function draw() {
         }
       }
       
-      updateBrushColor();
+      if (rainbow) {
+         updateBrushColor();
+      }
+     
       mesh.geometry.colorsNeedUpdate = true;
       mesh.geometry.elementsNeedUpdate = true;
       mesh.geometry.faces.needsUpdate = true;
