@@ -108,12 +108,12 @@ function init() {
   // scene
   scene = new THREE.Scene();
   
-  light = new THREE.AmbientLight( 0x444444 );
-  scene.add( light );
+  //light = new THREE.AmbientLight( 0x444444 );
+  //scene.add( light );
   
-  var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-  directionalLight.position.set( 0, 0, 1 ).normalize();
-  scene.add( directionalLight );
+  //var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+  //directionalLight.position.set( 0, 0, 1 ).normalize();
+  //scene.add( directionalLight );
 
   loadLeePerrySmith();
 
@@ -365,6 +365,7 @@ function toggleAbout(){
 
 
 		</script>
+		<script src="js/light.js"></script>
 		
 	</body>
 </html>
