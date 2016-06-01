@@ -85,3 +85,8 @@ button {
     -webkit-transform: scale(1.0);
   }
 }
+
+
+footer {
+	text-align: center;
+}
