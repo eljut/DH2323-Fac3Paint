@@ -9,6 +9,7 @@ var helper;
 var obj;
 var textureLoader = new THREE.TextureLoader();
 var mesh;
+var geometry;
 var helper;
 var colorsNeedUpdate;
 var light;
@@ -28,6 +29,18 @@ var params = {
   brushColor: "#dc47b8",
   Rainbow: false,
   Gradient: false,
+  Clear: function() {
+    for (i = 0; i < mesh.geometry.faces.length; i++) {
+      face = mesh.geometry.faces[i];
+      numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+      for (j = 0; j < numberOfSides; j++) {
+        mesh.geometry.faces[ i ].vertexColors[ j ].setHex( 0xffffff );
+      }
+      mesh.geometry.colorsNeedUpdate = true;
+      mesh.geometry.elementsNeedUpdate = true;
+      mesh.geometry.faces.needsUpdate = true;
+    }
+  }
 };
 
 var gui = new dat.GUI();
@@ -36,7 +49,6 @@ var updateSkinColor = function () {
     var facecolorObj = new THREE.Color( params.faceColor );
     var hex = facecolorObj.getHexString();
     chosenSkinColor = hex;
-    //var css = facecolorObj.getStyle();
     mesh.material.color.setHex("0x" + hex);
 };
 
@@ -52,7 +64,6 @@ var updateBrushColor = function() {
     rainbow = false;
     var facecolorObj = new THREE.Color( params.brushColor );
     var hex = facecolorObj.getHexString();
-  //var str = "0x";
     chosenBrushColor = hex;
     helper.material.color.setHex("0x" + chosenBrushColor);
   }
@@ -63,14 +74,11 @@ var updateBrushColor = function() {
   }
 }
 
-var update = function() {
-
-}
-
 gui.addColor(params, 'faceColor').onChange(updateSkinColor);
 gui.addColor(params, 'brushColor').onChange(updateBrushColor);
 gui.add(params, 'Rainbow').onChange(updateBrushColor);
 gui.add(params, 'Gradient').onChange(updateBrushColor);
+gui.add(params, 'Clear');
 
 function init() {
   container = document.createElement( 'div' );
@@ -78,18 +86,9 @@ function init() {
 
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 2000 );
   camera.position.z = 100;
-  //camera.position.x = 8;
-  //camera.position.y = 8;
   
   // scene
   scene = new THREE.Scene();
-  
-  // light = new THREE.AmbientLight( 0x444444 );
-  // scene.add( light );
-  
-  // directionalLight = new THREE.DirectionalLight( 0xffeedd );
-  // directionalLight.position.set( 0, 0, 1 ).normalize();
-  // scene.add( directionalLight );
 
   loadLeePerrySmith();
 
@@ -108,7 +107,6 @@ function init() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
   controls.enableZoom = false;
-
 
   //
   window.addEventListener( 'resize', onWindowResize, false );
@@ -135,29 +133,6 @@ function loadLeePerrySmith( callback ) {
         geometry.faces[ i ].vertexColors[ j ] = new THREE.Color( 0xffffff );
       }
     }
-    // for (i = 0; i < geometry.faces.length; i++) {
-    //   face = geometry.faces[i];
-    //   numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
-    //   for (j = 0; j < numberOfSides; j++) {
-    //     color = new THREE.Color( 0xffffff );
-    //     //color.setHSL(0.125 * j/mesh.geometry.faces.length, 1.0, 0.5);
-    //     color.setHex( 0xffffff );
-    //     geometry.faces[i].vertexColors[ j ] = color;
-    //     //console.log(geometry.faces[i].vertexColors);
-    //   }
-    // }
-
-    // for (i = 0; i < geometry.faces.length; i++) {
-    //   face = geometry.faces[i];
-    //   numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
-    //   for (j = 0; j < numberOfSides; j++) {
-    //     color = new THREE.Color( 0xffffff );
-    //     //color.setHSL(0.125 * j/mesh.geometry.faces.length, 1.0, 0.5);
-    //     color.setHex( Math.random() * 0xffffff );
-    //     geometry.faces[i].vertexColors[ j ] = color;
-    //     //console.log(geometry.faces[i].vertexColors);
-    //   }
-    // }
 
     mesh = new THREE.Mesh( geometry, material );
 
