@@ -1,7 +1,8 @@
 //variables for all the different lights
 var ambientLight;
 var directionalLight;
-var pointLight;
+var pointLight = new THREE.PointLight( 0x444444, 2, 30 );
+	pointLight.position.set( 0, 0, 37 );;
 
 
 //sets up a default light for the scene
@@ -15,10 +16,6 @@ function setupLight(){
 	directionalLight = new THREE.DirectionalLight( 0xffeedd );
 	directionalLight.position.set( 0, 0, 1 ).normalize();
 	scene.add( directionalLight );
-
-	//set up the point light but without adding it to the scene
-	pointlight = new THREE.PointLight( 0x444444, 2, 30 );
-	pointLight.position.set( 0, 0, 37 );
 
 }
 
@@ -88,39 +85,6 @@ ambientLightFolder.addColor(params, 'ambientLightColor').onChange(function(){
 	ambientLight.color.setStyle( params.ambientLightColor );
 });
 
-//directional light
-var directionalLightFolder = lightFolder.addFolder("Directional Light");
-
-//turn on and off
-directionalLightFolder.add(params, "directionalLight").listen().onChange(function(){
-	if (params.directionalLight) {
-		scene.add( directionalLight );
-	} else if (!params.directionalLight){
-		scene.remove( directionalLight );
-	}
-})
-
-
-//color of directional light
-directionalLightFolder.addColor(params, 'directionalLightColor').onChange(function(){
-	directionalLight.color.setStyle( params.directionalLightColor );
-});
-
-//x coordinate
-directionalLightFolder.add(params, "directionalLightX", -10, 10).onChange(function(){
-	directionalLight.position.x = params.directionalLightX;
-})
-
-//y coordinate
-directionalLightFolder.add(params, "directionalLightY", -10, 10).onChange(function(){
-	directionalLight.position.y = params.directionalLightY;
-})
-
-//z coordinate
-directionalLightFolder.add(params, "directionalLightZ", -10, 10).onChange(function(){
-	directionalLight.position.z = params.directionalLightZ;
-})
-
 //pointlight
 var pointLightFolder = lightFolder.addFolder("Point Light");
 
@@ -161,6 +125,39 @@ pointLightFolder.add(params, "pointLightDistance", 0, 70).onChange(function(){
 //point light intensity
 pointLightFolder.add(params, "pointLightIntensity", 0, 10).onChange(function(){
 	pointLight.intensity = params.pointLightIntensity;
+})
+
+//directional light
+var directionalLightFolder = lightFolder.addFolder("Directional Light");
+
+//turn on and off
+directionalLightFolder.add(params, "directionalLight").listen().onChange(function(){
+	if (params.directionalLight) {
+		scene.add( directionalLight );
+	} else if (!params.directionalLight){
+		scene.remove( directionalLight );
+	}
+})
+
+
+//color of directional light
+directionalLightFolder.addColor(params, 'directionalLightColor').onChange(function(){
+	directionalLight.color.setStyle( params.directionalLightColor );
+});
+
+//x coordinate
+directionalLightFolder.add(params, "directionalLightX", -10, 10).onChange(function(){
+	directionalLight.position.x = params.directionalLightX;
+})
+
+//y coordinate
+directionalLightFolder.add(params, "directionalLightY", -10, 10).onChange(function(){
+	directionalLight.position.y = params.directionalLightY;
+})
+
+//z coordinate
+directionalLightFolder.add(params, "directionalLightZ", -10, 10).onChange(function(){
+	directionalLight.position.z = params.directionalLightZ;
 })
 
 // reset light
