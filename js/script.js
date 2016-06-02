@@ -160,7 +160,7 @@ function init() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
   //controls.enableZoom = true;
-  controls.minDistance = 80;
+  controls.minDistance = 70;
   controls.maxDistance = 160; // börjar här
 
   //
