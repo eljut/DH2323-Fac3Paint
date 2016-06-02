@@ -162,8 +162,10 @@ function init() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
   controls.enableZoom = true;
+  //zoom contraints
   controls.minDistance = 80;
   controls.maxDistance = 160;
+  //vertical constraints made in Orbitcontols.js
 
   window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -243,6 +245,7 @@ function draw() {
   
   // Check if there was an intersection
   if ( intersects.length > 0 ) {
+    //controls disabled when mouse is on mesh
     controls.enabled = false;
     helper.visible = true;
     document.body.style.cursor = 'none';
@@ -288,6 +291,7 @@ function draw() {
       mesh.geometry.faces.needsUpdate = true;
     }
   } else {
+    //controls enable and heper hidden
     controls.enabled = true;
     helper.visible = false;
     document.body.style.cursor = 'default';
