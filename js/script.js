@@ -162,6 +162,8 @@ function init() {
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
   controls.enableZoom = true;
+  controls.minDistance = 80;
+  controls.maxDistance = 160;
 
   window.addEventListener( 'resize', onWindowResize, false );
 }
