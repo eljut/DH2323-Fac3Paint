@@ -159,7 +159,9 @@ function init() {
   controls = new THREE.OrbitControls( camera, renderer.domElement );
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
-  controls.enableZoom = true;
+  //controls.enableZoom = true;
+  controls.minDistance = 80;
+  controls.maxDistance = 160; // börjar här
 
   //
   window.addEventListener( 'resize', onWindowResize, false );
