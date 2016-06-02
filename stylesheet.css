@@ -88,5 +88,12 @@ button {
 
 
 footer {
+	position: absolute;
 	text-align: center;
+	bottom:0;
+	width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
 }
